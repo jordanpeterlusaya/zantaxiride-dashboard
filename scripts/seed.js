@@ -1,9 +1,6 @@
-const dns = require('dns');
-try { dns.setDefaultResultOrder('ipv4first'); } catch (_) {}
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
-const { URL } = require('url');
+const { neon } = require('@neondatabase/serverless');
 
 function loadEnv() {
   const envPath = path.join(__dirname, '..', '.env.local');
@@ -19,47 +16,14 @@ function loadEnv() {
 }
 
 loadEnv();
-
-function runSql(query) {
-  const conn = process.env.DATABASE_URL;
-  const u = new URL(conn.replace(/^postgresql:/, 'https:'));
-  const endpoint = `https://${u.hostname}/sql`;
-  const body = JSON.stringify({ query, params: [] });
-  return new Promise((resolve, reject) => {
-    const req = https.request(
-      endpoint,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Neon-Connection-String': conn,
-          'Content-Length': Buffer.byteLength(body),
-        },
-        timeout: 60000,
-        family: 4,
-      },
-      (res) => {
-        let data = '';
-        res.on('data', (c) => (data += c));
-        res.on('end', () => {
-          if (res.statusCode >= 400) return reject(new Error(data || `HTTP ${res.statusCode}`));
-          try { resolve(JSON.parse(data)); } catch (e) { reject(e); }
-        });
-      }
-    );
-    req.on('error', reject);
-    req.on('timeout', () => req.destroy(new Error('timeout')));
-    req.write(body);
-    req.end();
-  });
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL missing');
+  process.exit(1);
 }
+const sql = neon(process.env.DATABASE_URL);
 
 function readJson(name) {
   return JSON.parse(fs.readFileSync(path.join(__dirname, name), 'utf8'));
-}
-
-function esc(s) {
-  return String(s).replace(/'/g, "''");
 }
 
 async function main() {
@@ -67,51 +31,63 @@ async function main() {
   const tours = readJson('tours-seed.json');
   const safaris = readJson('safaris-seed.json');
 
-  await runSql('DELETE FROM prices');
-  await runSql(`INSERT INTO prices (data) VALUES ('${esc(JSON.stringify(prices))}'::jsonb)`);
+  await sql`DELETE FROM prices`;
+  await sql`INSERT INTO prices (data) VALUES (${JSON.stringify(prices)}::jsonb)`;
 
-  await runSql('DELETE FROM tours');
+  await sql`DELETE FROM tours`;
   for (const t of tours) {
-    const notes = JSON.stringify(t.notes || []);
-    const rates = JSON.stringify(t.rates || []);
-    await runSql(`INSERT INTO tours (slug, title, eyebrow, image, summary, includes, excludes, notes, rates, booking_item, active, sort_order) VALUES (
-      '${esc(t.slug)}', '${esc(t.title)}', '${esc(t.eyebrow || '')}', '${esc(t.image || '')}',
-      '${esc(t.summary || '')}', '${esc(t.includes || '')}', '${esc(t.excludes || '')}',
-      '${esc(notes)}'::jsonb, '${esc(rates)}'::jsonb, '${esc(t.booking_item || t.title)}',
-      ${t.active !== false}, ${t.sort_order ?? 0}
-    )`);
+    const notes = Array.isArray(t.notes) ? t.notes : [];
+    const rates = Array.isArray(t.rates) ? t.rates : [];
+    await sql`
+      INSERT INTO tours (slug, title, eyebrow, image, summary, includes, excludes, notes, rates, booking_item, active, sort_order)
+      VALUES (
+        ${t.slug}, ${t.title}, ${t.eyebrow || ''}, ${t.image || ''}, ${t.summary || ''},
+        ${t.includes || ''}, ${t.excludes || ''},
+        ${JSON.stringify(notes)}::jsonb, ${JSON.stringify(rates)}::jsonb,
+        ${t.booking_item || t.title}, ${t.active !== false}, ${t.sort_order ?? 0}
+      )
+    `;
   }
 
-  await runSql('DELETE FROM safaris');
+  await sql`DELETE FROM safaris`;
   for (const s of safaris) {
-    const notes = JSON.stringify(s.notes || []);
-    const rates = JSON.stringify(s.rates || []);
-    await runSql(`INSERT INTO safaris (slug, title, image, summary, includes, notes, rates, booking_item, active, sort_order) VALUES (
-      '${esc(s.slug)}', '${esc(s.title)}', '${esc(s.image || '')}', '${esc(s.summary || s.eyebrow || '')}',
-      '${esc(s.includes || '')}', '${esc(notes)}'::jsonb, '${esc(rates)}'::jsonb,
-      '${esc(s.booking_item || s.title)}', ${s.active !== false}, ${s.sort_order ?? 0}
-    )`);
+    const notes = Array.isArray(s.notes) ? s.notes : [];
+    const rates = Array.isArray(s.rates) ? s.rates : [];
+    await sql`
+      INSERT INTO safaris (slug, title, image, summary, includes, notes, rates, booking_item, active, sort_order)
+      VALUES (
+        ${s.slug}, ${s.title}, ${s.image || ''}, ${s.summary || s.eyebrow || ''}, ${s.includes || ''},
+        ${JSON.stringify(notes)}::jsonb, ${JSON.stringify(rates)}::jsonb,
+        ${s.booking_item || s.title}, ${s.active !== false}, ${s.sort_order ?? 0}
+      )
+    `;
   }
 
-  await runSql('DELETE FROM content_blocks');
+  await sql`DELETE FROM content_blocks`;
   const blocks = [
     { key: 'home_tagline', label: 'Home tagline', body: 'Airport transfers, private tours & safari from Zanzibar.' },
     { key: 'whatsapp_note', label: 'WhatsApp booking note', body: 'Send your pickup time and hotel name on WhatsApp after booking.' },
     { key: 'footer_blurb', label: 'Footer blurb', body: 'ZantaxiRide — reliable taxi, tours and safari in Zanzibar.' },
   ];
   for (const b of blocks) {
-    await runSql(`INSERT INTO content_blocks (key, label, body) VALUES ('${esc(b.key)}', '${esc(b.label)}', '${esc(b.body)}')`);
+    await sql`INSERT INTO content_blocks (key, label, body) VALUES (${b.key}, ${b.label}, ${b.body})`;
   }
 
-  await runSql('DELETE FROM site_settings');
-  await runSql(`INSERT INTO site_settings (data) VALUES ('${esc(JSON.stringify({ brand: 'ZantaxiRide', whatsapp: '+255777000000', currency: 'USD' }))}'::jsonb)`);
+  await sql`DELETE FROM site_settings`;
+  await sql`INSERT INTO site_settings (data) VALUES (${JSON.stringify({
+    brand: 'ZantaxiRide',
+    whatsapp: '+255777000000',
+    currency: 'USD',
+  })}::jsonb)`;
 
-  const counts = await runSql(`SELECT
-    (SELECT count(*)::int FROM tours) AS tours,
-    (SELECT count(*)::int FROM safaris) AS safaris,
-    (SELECT count(*)::int FROM prices) AS prices,
-    (SELECT count(*)::int FROM content_blocks) AS content`);
-  console.log('Seeded OK', counts.rows?.[0] || counts);
+  const counts = await sql`
+    SELECT
+      (SELECT count(*)::int FROM tours) AS tours,
+      (SELECT count(*)::int FROM safaris) AS safaris,
+      (SELECT count(*)::int FROM prices) AS prices,
+      (SELECT count(*)::int FROM content_blocks) AS content
+  `;
+  console.log('Seeded OK', counts[0]);
 }
 
 main().catch((err) => {

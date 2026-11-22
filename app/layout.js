@@ -3,8 +3,14 @@ import './globals.css';
 export const metadata = {
   title: 'ZantaxiRide Admin',
   description: 'Mobile admin dashboard for ZantaxiRide prices, tours and safari packages',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover',
   themeColor: '#0b1220',
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }) {

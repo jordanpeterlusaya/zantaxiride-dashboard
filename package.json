@@ -6,8 +6,10 @@
     "dev": "next dev -p 3010",
     "build": "next build",
     "start": "next start -p 3010",
-    "seed": "node scripts/seed.js",
-    "phone": "node standalone-server.mjs"
+    "seed": "node scripts/seed.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",

@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 import { sql } from '../../../../lib/db';
 import { requireAdmin } from '../../../../lib/auth';
 import { json, error } from '../../../../lib/api';

@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 import { clearSessionCookie } from '../../../../lib/auth';
 import { json } from '../../../../lib/api';
 

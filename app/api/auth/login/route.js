@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 import { checkCredentials, createSession, setSessionCookie } from '../../../../lib/auth';
 import { json } from '../../../../lib/api';
 
