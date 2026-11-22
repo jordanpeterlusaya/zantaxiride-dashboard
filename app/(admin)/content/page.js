@@ -76,7 +76,7 @@ export default function ContentPage() {
       <div className="topbar">
         <div>
           <h1 className="h1" style={{ margin: 0 }}>Website words</h1>
-          <div className="muted">Tagline, WhatsApp, and other text</div>
+          <div className="muted">These words appear on the website. Use home_tagline, home_headline, about_story, footer_blurb, or whatsapp_note.</div>
         </div>
         <button className="btn btn-primary btn-sm" disabled={saving} onClick={save}>{saving ? '…' : 'Save'}</button>
       </div>
