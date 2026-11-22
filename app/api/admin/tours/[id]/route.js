@@ -4,6 +4,7 @@ export const runtime = 'nodejs';
 import { sql } from '../../../../../lib/db';
 import { requireAdmin } from '../../../../../lib/auth';
 import { json, error } from '../../../../../lib/api';
+import { removeTourFromPrices, syncTourIntoPrices } from '../../../../../lib/sync-prices';
 
 export async function GET(_req, { params }) {
   try {
@@ -43,6 +44,7 @@ export async function PUT(req, { params }) {
       RETURNING *
     `;
     if (!rows.length) return json({ error: 'Not found' }, 404);
+    await syncTourIntoPrices(rows[0]);
     return json({ tour: rows[0] });
   } catch (err) {
     return error(err);
@@ -53,7 +55,9 @@ export async function DELETE(_req, { params }) {
   try {
     await requireAdmin();
     const id = Number(params.id);
+    const existing = await sql`SELECT title, booking_item FROM tours WHERE id = ${id}`;
     await sql`DELETE FROM tours WHERE id = ${id}`;
+    if (existing[0]) await removeTourFromPrices(existing[0]);
     return json({ ok: true });
   } catch (err) {
     return error(err);

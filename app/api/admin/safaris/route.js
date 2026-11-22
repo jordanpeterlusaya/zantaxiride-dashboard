@@ -4,6 +4,7 @@ export const runtime = 'nodejs';
 import { sql } from '../../../../lib/db';
 import { requireAdmin } from '../../../../lib/auth';
 import { json, error } from '../../../../lib/api';
+import { syncSafariIntoPrices } from '../../../../lib/sync-prices';
 
 export async function GET() {
   try {
@@ -33,6 +34,7 @@ export async function POST(req) {
       )
       RETURNING *
     `;
+    await syncSafariIntoPrices(rows[0]);
     return json({ safari: rows[0] }, 201);
   } catch (err) {
     return error(err);

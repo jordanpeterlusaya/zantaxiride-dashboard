@@ -8,8 +8,6 @@ const TABS = [
   { id: 'airport', label: 'Airport' },
   { id: 'beach', label: 'Beach' },
   { id: 'sharing', label: 'Sharing' },
-  { id: 'tours', label: 'Tours' },
-  { id: 'safari', label: 'Safari $' },
   { id: 'raw', label: 'Advanced' },
 ];
 
@@ -80,15 +78,13 @@ export default function PricesPage() {
   const airport = prices.privateAirport?.[vehicle] || {};
   const beach = prices.privateBeach || {};
   const sharing = prices.sharing?.vehicles || {};
-  const tours = prices.tours || {};
-  const safari = prices.safari || {};
 
   return (
     <div>
       <div className="topbar">
         <div>
           <h1 className="h1" style={{ margin: 0 }}>Prices</h1>
-          <div className="muted">Tap a number to edit · USD</div>
+          <div className="muted">Taxi & sharing fares · USD. Tour and safari prices are edited on Tours and Safari.</div>
         </div>
         <button className="btn btn-primary btn-sm" disabled={saving} onClick={() => (tab === 'raw' ? saveRaw() : save())}>
           {saving ? '…' : 'Save'}
@@ -197,47 +193,6 @@ export default function PricesPage() {
                     onChange={(e) => setPrices((p) => deepSet(p, ['sharing', 'vehicles', v, 'totalsBeach', k], Number(e.target.value)))} />
                 </div>
               )) : null}
-            </div>
-          ))}
-        </div>
-      ) : null}
-
-      {tab === 'tours' ? (
-        <div className="card">
-          {Object.entries(tours).map(([name, cfg]) => (
-            <div key={name} style={{ marginBottom: 16 }}>
-              <div className="h2">{name}</div>
-              {cfg.pp != null ? (
-                <div className="price-row">
-                  <div>Per person</div>
-                  <input className="field" type="number" value={cfg.pp}
-                    onChange={(e) => setPrices((p) => deepSet(p, ['tours', name, 'pp'], Number(e.target.value)))} />
-                </div>
-              ) : null}
-              {cfg.group ? Object.entries(cfg.group).map(([k, val]) => (
-                <div className="price-row" key={k}>
-                  <div>{k} pax</div>
-                  <input className="field" type="number" value={val}
-                    onChange={(e) => setPrices((p) => deepSet(p, ['tours', name, 'group', k], Number(e.target.value)))} />
-                </div>
-              )) : null}
-            </div>
-          ))}
-        </div>
-      ) : null}
-
-      {tab === 'safari' ? (
-        <div className="card">
-          {Object.entries(safari).map(([name, cfg]) => (
-            <div key={name} style={{ marginBottom: 16 }}>
-              <div className="h2">{name}</div>
-              {Object.entries(cfg || {}).map(([k, val]) => (
-                <div className="price-row" key={k}>
-                  <div>{k}</div>
-                  <input className="field" type="number" value={val}
-                    onChange={(e) => setPrices((p) => deepSet(p, ['safari', name, k], Number(e.target.value)))} />
-                </div>
-              ))}
             </div>
           ))}
         </div>
