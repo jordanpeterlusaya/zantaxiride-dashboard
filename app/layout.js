@@ -3,7 +3,7 @@ import './globals.css';
 export const metadata = {
   title: 'ZantaxiRide Admin',
   description: 'Mobile admin dashboard for ZantaxiRide prices, tours and safari packages',
-  themeColor: '#0b1220',
+  themeColor: '#f4f1ea',
 };
 
 export const viewport = {

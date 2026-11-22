@@ -67,10 +67,13 @@ export default function ImagePicker({ value, onChange, alt = '' }) {
         // eslint-disable-next-line @next/next/no-img-element
         <img className="picker-preview" src={src} alt="" />
       ) : (
-        <div className="picker-empty">No photo yet</div>
+        <div className="picker-empty">
+          <span>Add a photo</span>
+          <small>Choose from your phone or computer</small>
+        </div>
       )}
       <label className={`btn btn-secondary${busy ? ' is-disabled' : ''}`}>
-        {busy ? 'Uploading…' : src ? 'Change photo' : 'Add photo'}
+        {busy ? 'Uploading…' : src ? 'Replace photo' : 'Choose photo'}
         <input className="file-input" type="file" accept="image/*" onChange={onFile} disabled={busy} />
       </label>
       {src ? (

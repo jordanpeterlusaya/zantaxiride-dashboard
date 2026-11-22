@@ -36,8 +36,8 @@ export default function LoginPage() {
     <div className="login-wrap">
       <form className="login-card stack" onSubmit={onSubmit}>
         <div>
-          <div className="brand">Zantaxi<span>Ride</span> Admin</div>
-          <p className="muted" style={{ marginTop: 8 }}>Phone-first CMS for prices, tours & safari</p>
+          <div className="brand">Zantaxi<span>Ride</span></div>
+          <p className="muted" style={{ marginTop: 8 }}>Sign in to change prices, tours, safaris, and photos.</p>
         </div>
         <div>
           <label className="label">Username</label>
