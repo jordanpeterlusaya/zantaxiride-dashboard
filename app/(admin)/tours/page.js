@@ -17,7 +17,9 @@ export default async function ToursPage() {
       </div>
       <div className="card" style={{ paddingTop: 4, paddingBottom: 4 }}>
         {tours.map((t) => {
-          const first = Array.isArray(t.rates) && t.rates[0] ? `$${t.rates[0].price}` : '—';
+          const raw = Array.isArray(t.rates) && t.rates[0] ? String(t.rates[0].price || '') : '';
+          const clean = raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          const first = clean ? (clean.startsWith('$') ? clean : `$${clean}`) : '—';
           return (
             <Link key={t.id} href={`/tours/${t.id}`} className="list-item">
               {/* eslint-disable-next-line @next/next/no-img-element */}
