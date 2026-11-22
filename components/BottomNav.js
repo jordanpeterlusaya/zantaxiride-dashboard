@@ -8,7 +8,7 @@ const LINKS = [
   { href: '/prices', label: 'Prices', ico: '$' },
   { href: '/tours', label: 'Tours', ico: '✈' },
   { href: '/safaris', label: 'Safari', ico: '◆' },
-  { href: '/content', label: 'More', ico: '☰' },
+  { href: '/media', label: 'Photos', ico: '▣' },
 ];
 
 export default function BottomNav() {

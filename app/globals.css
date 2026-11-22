@@ -16,17 +16,21 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); min-height: 100%; }
 body {
-  max-width: 480px;
-  margin: 0 auto;
+  margin: 0;
   min-height: 100dvh;
   background:
-    radial-gradient(120% 80% at 50% -20%, rgba(240,180,41,0.18), transparent 55%),
-    linear-gradient(180deg, #10182a 0%, #0b1220 40%, #0a101c 100%);
+    radial-gradient(90% 50% at 100% -10%, rgba(240,180,41,0.12), transparent 45%),
+    #0b1220;
 }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
 img { max-width: 100%; display: block; }
-.app-shell { min-height: 100dvh; padding: 16px 16px calc(var(--nav-h) + var(--safe-b) + 20px); }
+.app-shell {
+  min-height: 100dvh;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 16px 16px calc(var(--nav-h) + var(--safe-b) + 20px);
+}
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
 .brand { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.02em; }
 .brand span { color: var(--accent); }
@@ -54,6 +58,7 @@ img { max-width: 100%; display: block; }
 .btn-danger { background: rgba(226,85,85,0.18); color: #ffb4b4; }
 .btn-ghost { background: transparent; border: 1px solid var(--line); }
 .btn-sm { min-height: 40px; width: auto; padding: 0 12px; font-size: 0.9rem; }
+label.btn { position: relative; cursor: pointer; }
 .btn:disabled { opacity: 0.55; }
 .pill {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
@@ -65,15 +70,15 @@ img { max-width: 100%; display: block; }
   padding: 10px 0; border-bottom: 1px solid var(--line);
 }
 .list-item:last-child { border-bottom: 0; }
-.thumb { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: var(--bg2); }
+.thumb { display: block; width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: var(--bg2); }
 .title { font-weight: 700; font-size: 0.98rem; }
 .sub { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
 .bottom-nav {
-  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0;
-  width: min(480px, 100%); height: calc(var(--nav-h) + var(--safe-b));
+  position: fixed; left: 0; right: 0; bottom: 0;
+  height: calc(var(--nav-h) + var(--safe-b));
   padding: 8px 8px calc(8px + var(--safe-b));
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
-  background: rgba(12,18,30,0.92); backdrop-filter: blur(14px);
+  background: rgba(12,18,30,0.94); backdrop-filter: blur(14px);
   border-top: 1px solid var(--line); z-index: 50;
 }
 .nav-link {
@@ -113,3 +118,30 @@ img { max-width: 100%; display: block; }
   border: 1px solid transparent; font-size: 0.85rem; font-weight: 600;
 }
 .chip.on { border-color: var(--accent); color: var(--accent); background: rgba(240,180,41,0.1); }
+.file-input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.picker { display: grid; gap: 10px; }
+.picker-preview, .picker-empty {
+  width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 14px; background: var(--bg2);
+}
+.picker-empty {
+  display: grid; place-items: center; color: var(--muted); border: 1px dashed var(--line);
+}
+.rate-row { display: grid; grid-template-columns: 1fr 96px auto; gap: 8px; align-items: center; }
+.switch { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.photo-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.photo-card img { width: 100%; height: 140px; object-fit: cover; background: var(--bg2); }
+.photo-card-body { display: grid; gap: 8px; padding: 10px; }
+details.card summary { cursor: pointer; font-weight: 700; }
+.is-disabled { opacity: 0.55; pointer-events: none; }
+@media (min-width: 900px) {
+  .app-shell { width: min(860px, calc(100% - 240px)); margin: 0 0 0 220px; padding: 28px 28px 48px; }
+  .bottom-nav {
+    top: 0; bottom: 0; right: auto; width: 220px; height: 100dvh;
+    display: flex; flex-direction: column; gap: 6px; padding: 20px 12px;
+    border-top: 0; border-right: 1px solid var(--line);
+  }
+  .nav-link { flex-direction: row; justify-content: flex-start; gap: 10px; font-size: 0.95rem; padding: 0 12px; }
+  .photo-grid { grid-template-columns: repeat(3, 1fr); }
+  .toast { left: calc(220px + (100% - 220px) / 2); }
+}

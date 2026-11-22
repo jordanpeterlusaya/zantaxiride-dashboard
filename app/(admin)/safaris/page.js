@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 import { sql } from '../../../lib/db';
+import { previewSrc } from '../../../lib/preview';
 
 export default async function SafarisPage() {
   const safaris = await sql`SELECT id, slug, title, image, active, sort_order, rates FROM safaris ORDER BY sort_order ASC, id ASC`;
@@ -20,7 +21,7 @@ export default async function SafarisPage() {
           return (
             <Link key={s.id} href={`/safaris/${s.id}`} className="list-item">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="thumb" src={s.image?.startsWith('http') ? s.image : `https://www.zantaxiride.com/${s.image || ''}`} alt="" />
+              {previewSrc(s.image) ? <img className="thumb" src={previewSrc(s.image)} alt="" /> : <span className="thumb" />}
               <div>
                 <div className="title">{s.title}</div>
                 <div className="sub">{s.active ? first : 'Hidden'} · {s.slug}</div>

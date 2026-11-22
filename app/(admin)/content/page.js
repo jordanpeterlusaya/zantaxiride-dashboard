@@ -75,8 +75,8 @@ export default function ContentPage() {
     <div>
       <div className="topbar">
         <div>
-          <h1 className="h1" style={{ margin: 0 }}>More</h1>
-          <div className="muted">Site text · settings · media</div>
+          <h1 className="h1" style={{ margin: 0 }}>Website words</h1>
+          <div className="muted">Tagline, WhatsApp, and other text</div>
         </div>
         <button className="btn btn-primary btn-sm" disabled={saving} onClick={save}>{saving ? '…' : 'Save'}</button>
       </div>
@@ -128,8 +128,8 @@ export default function ContentPage() {
 
       <Link className="card row" href="/media">
         <div>
-          <div className="title">Media library</div>
-          <div className="sub">Add image URLs for packages</div>
+          <div className="title">Photos</div>
+          <div className="sub">Upload a photo from your phone or computer</div>
         </div>
         <span>›</span>
       </Link>

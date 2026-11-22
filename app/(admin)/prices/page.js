@@ -10,7 +10,7 @@ const TABS = [
   { id: 'sharing', label: 'Sharing' },
   { id: 'tours', label: 'Tours' },
   { id: 'safari', label: 'Safari $' },
-  { id: 'raw', label: 'JSON' },
+  { id: 'raw', label: 'Advanced' },
 ];
 
 function deepSet(obj, path, value) {
